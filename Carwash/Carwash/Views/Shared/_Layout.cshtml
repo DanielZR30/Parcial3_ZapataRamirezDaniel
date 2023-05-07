@@ -25,6 +25,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Políticas de Privacidad</a>
                         </li>
+                        <!--Put this on client-->
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Vehicles" asp-action="Create">Servicios para su vehiculo</a>
+                        </li>
+
+                        <!--Put this on Admin-->
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="VehicleDetails" asp-action="Index">Servicios para su vehiculo</a>
+                        </li>
                         @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
                             <li class="nav-item">

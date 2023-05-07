@@ -8,16 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using Carwash.DAL;
 using Carwash.DAL.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Carwash.Helpers;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Carwash.Models;
+using Carwash.Enums;
 
 namespace Carwash.Controllers
 {
     public class VehiclesController : Controller
     {
         private readonly DatabaseContext _context;
-
-        public VehiclesController(DatabaseContext context)
+        private readonly IDropDownListHelper _DDLHelper;
+        private readonly IUserHelper _userHelper;
+        public VehiclesController(DatabaseContext context, IDropDownListHelper dropDownListHelper)
         {
             _context = context;
+            _DDLHelper = dropDownListHelper;
         }
 
         // GET: Vehicles
@@ -47,9 +55,14 @@ namespace Carwash.Controllers
         }
 
         // GET: Vehicles/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+
+            ServiceViewModel serviceViewModel = new()
+            {
+                Services = await _DDLHelper.GetDDLServicesAsync(),
+            };
+            return View(serviceViewModel);
         }
 
         // POST: Vehicles/Create
@@ -57,16 +70,30 @@ namespace Carwash.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Owner,NumbrePlate,Id")] Vehicle vehicle)
+        public async Task<IActionResult> Create(ServiceViewModel serviceViewModel)
         {
-            if (ModelState.IsValid)
+            Vehicle vehicle;
+            VehicleDetail vehicleDetail;
+            vehicle = new Vehicle()
             {
-                vehicle.Id = Guid.NewGuid();
-                _context.Add(vehicle);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(vehicle);
+                Id = Guid.NewGuid(),
+                Service = await _context.Services.FindAsync(serviceViewModel.ServiceId),
+                Owner = serviceViewModel.Owner,
+                NumbrePlate = serviceViewModel.NumbrePlate
+            };
+
+            vehicleDetail = new VehicleDetail()
+            {
+                Id = Guid.NewGuid(),
+                CreatedDate = DateTime.Now,
+                DeliveryDate = null,
+                Vehicle = vehicle
+            };
+
+            _context.Add(vehicle);
+            _context.VehicleDetails.Add(vehicleDetail);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index","Home");
         }
 
         // GET: Vehicles/Edit/5

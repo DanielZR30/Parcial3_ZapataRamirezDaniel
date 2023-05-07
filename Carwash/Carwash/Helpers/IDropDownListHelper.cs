@@ -1,6 +1,11 @@
-﻿namespace Carwash.Helpers
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace Carwash.Helpers
 {
-    public class IDropDownListHelper
+    public interface IDropDownListHelper
     {
+        Task<IEnumerable<SelectListItem>> GetDDLServicesAsync();
+        Task<IEnumerable<SelectListItem>> GetDDLVehiclesAsync();
+
     }
 }

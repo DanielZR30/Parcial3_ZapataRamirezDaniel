@@ -1,16 +1,19 @@
-﻿@model Carwash.DAL.Entities.Vehicle
+﻿@model Carwash.Models.ServiceViewModel
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>Vehicle</h4>
-<hr />
+<h1>Solicitar Servicio</h1>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
+           
+            <div class="form-group">
+                <label asp-for="ServiceId" class="control-label"></label>
+                <select asp-for="ServiceId" asp-items="Model.Services" class="form-control"></select>
+                <span asp-validation-for="ServiceId" class="text-danger"></span>
+            </div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Owner" class="control-label"></label>
@@ -33,6 +36,4 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+
