@@ -62,28 +62,41 @@ namespace Carwash.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ServiceViewModel serviceViewModel)
         {
-            Vehicle vehicle;
-            VehicleDetail vehicleDetail;
-            vehicle = new Vehicle()
-            {
-                Id = Guid.NewGuid(),
-                Service = await _context.Services.FindAsync(serviceViewModel.ServiceId),
-                Owner = serviceViewModel.Owner,
-                NumbrePlate = serviceViewModel.NumbrePlate
-            };
+                try
+                {
+                    Vehicle vehicle;
+                    VehicleDetail vehicleDetail;
+                    vehicle = new Vehicle()
+                    {
+                        Id = Guid.NewGuid(),
+                        Service = await _context.Services.FindAsync(serviceViewModel.ServiceId),
+                        Owner = serviceViewModel.Owner,
+                        NumbrePlate = serviceViewModel.NumbrePlate
+                    };
 
-            vehicleDetail = new VehicleDetail()
-            {
-                Id = Guid.NewGuid(),
-                CreatedDate = DateTime.Now,
-                DeliveryDate = null,
-                Vehicle = vehicle
-            };
+                    vehicleDetail = new VehicleDetail()
+                    {
+                        Id = Guid.NewGuid(),
+                        CreatedDate = DateTime.Now,
+                        DeliveryDate = null,
+                        Vehicle = vehicle
+                    };
 
-            _context.Add(vehicle);
-            _context.VehicleDetails.Add(vehicleDetail);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index","Home");
+                    _context.Add(vehicle);
+                    _context.VehicleDetails.Add(vehicleDetail);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", "Home");
+                }
+                catch (Exception ex)
+                {
+
+                }
+            serviceViewModel = new()
+            {
+                Services = await _DDLHelper.GetDDLServicesAsync(),
+            };
+            ModelState.AddModelError(string.Empty, "Seleccione un servicio");
+            return View(serviceViewModel);
         }
 
         [Authorize(Roles = "Client")]
