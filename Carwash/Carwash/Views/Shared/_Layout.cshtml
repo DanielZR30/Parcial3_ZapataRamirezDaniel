@@ -25,34 +25,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Políticas de Privacidad</a>
                         </li>
-                        <!--Put this on client-->
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Vehicles" asp-action="Create">Servicios para su vehiculo</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Vehicles" asp-action="Search">Buscar vehiculo</a>
-                        </li>
-
-
-                        <!--Put this on Admin-->
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="VehicleDetails" asp-action="Index">Servicios para su vehiculo</a>
-                        </li>
+                        
                         @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
+                            <!--Put this on Admin-->
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Vehicles" asp-action="Index">Ser</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index">Categoría</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Usuarios</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="VehicleDetails" asp-action="Index">Servicios para su vehiculo</a>
                             </li>
                         }
-                        else
+                        else if(User.Identity.IsAuthenticated && User.IsInRole("Client"))
                         {
-                            
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Vehicles" asp-action="Create">Servicios para su vehiculo</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Vehicles" asp-action="Search">Buscar vehiculo</a>
+                            </li>
+
                         }
                     </ul>
                     <ul class="nav navbar-nav navbar-right">

@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Carwash.DAL;
 using Carwash.DAL.Entities;
 using Carwash.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Carwash.Controllers
 {
@@ -47,6 +49,7 @@ namespace Carwash.Controllers
         }
 
         // GET: VehicleDetails/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -57,6 +60,7 @@ namespace Carwash.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> Create(Vehicle vehicle)
         {
             VehicleDetail vehicleDetail = new VehicleDetail();
@@ -72,7 +76,10 @@ namespace Carwash.Controllers
             return View(vehicleDetail);
         }
 
+
+
         // GET: Vehicles/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid? id, Guid? vehicleId)
         {
             if (id == null || _context.VehicleDetails == null)
@@ -98,11 +105,14 @@ namespace Carwash.Controllers
             return View(vehicleDetailVM);
         }
 
+       
+
         // POST: Vehicles/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid id, VehicleDetailViewModel vehicleDetailVM)
         {
                 try

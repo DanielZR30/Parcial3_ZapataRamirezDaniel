@@ -37,12 +37,14 @@ namespace Carwash.Controllers
         }
 
         // GET: Vehicles/Details/5
+        [Authorize(Roles = "Client")]
         public async Task<IActionResult> Details(VehicleViewModel vehicleViewModel)
         {
             return View(vehicleViewModel);
         }
 
         // GET: Vehicles/Create
+        [Authorize(Roles = "Client")]
         public async Task<IActionResult> Create()
         {
 
@@ -84,6 +86,7 @@ namespace Carwash.Controllers
             return RedirectToAction("Index","Home");
         }
 
+        [Authorize(Roles = "Client")]
         // GET: Vehicles/Edit/5
         public async Task<IActionResult> Search()
         {
@@ -95,9 +98,10 @@ namespace Carwash.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> Search(string NumbrePlate)
         {
-            VehicleDetail vehicleDetail = await _context.VehicleDetails.Include(vd => vd.Vehicle).ThenInclude(v => v.Service).Where(v=> v.Vehicle.NumbrePlate == NumbrePlate).FirstOrDefaultAsync();
+            VehicleDetail vehicleDetail = await _context.VehicleDetails.Include(vd => vd.Vehicle).ThenInclude(v => v.Service).OrderByDescending(v=>v.DeliveryDate).Where(v=> v.Vehicle.NumbrePlate == NumbrePlate).FirstOrDefaultAsync();
             if (vehicleDetail != null)
             {
                 Vehicle vehicle = vehicleDetail.Vehicle;
@@ -119,93 +123,8 @@ namespace Carwash.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null || _context.Vehicles == null)
-            {
-                return NotFound();
-            }
-
-            var vehicle = await _context.Vehicles.FindAsync(id);
-            if (vehicle == null)
-            {
-                return NotFound();
-            }
-            return View(vehicle);
-        }
-
-        // POST: Vehicles/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Owner,NumbrePlate,Id")] Vehicle vehicle)
-        {
-            if (id != vehicle.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(vehicle);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!VehicleExists(vehicle.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(vehicle);
-        }
-
         // GET: Vehicles/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null || _context.Vehicles == null)
-            {
-                return NotFound();
-            }
-
-            var vehicle = await _context.Vehicles
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (vehicle == null)
-            {
-                return NotFound();
-            }
-
-            return View(vehicle);
-        }
-
-        // POST: Vehicles/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            if (_context.Vehicles == null)
-            {
-                return Problem("Entity set 'DatabaseContext.Vehicles'  is null.");
-            }
-            var vehicle = await _context.Vehicles.FindAsync(id);
-            if (vehicle != null)
-            {
-                _context.Vehicles.Remove(vehicle);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
+  
         private bool VehicleExists(Guid id)
         {
           return (_context.Vehicles?.Any(e => e.Id == id)).GetValueOrDefault();
