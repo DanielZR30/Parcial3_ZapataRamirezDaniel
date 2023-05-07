@@ -37,21 +37,9 @@ namespace Carwash.Controllers
         }
 
         // GET: Vehicles/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(VehicleViewModel vehicleViewModel)
         {
-            if (id == null || _context.Vehicles == null)
-            {
-                return NotFound();
-            }
-
-            var vehicle = await _context.Vehicles
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (vehicle == null)
-            {
-                return NotFound();
-            }
-
-            return View(vehicle);
+            return View(vehicleViewModel);
         }
 
         // GET: Vehicles/Create
@@ -97,6 +85,40 @@ namespace Carwash.Controllers
         }
 
         // GET: Vehicles/Edit/5
+        public async Task<IActionResult> Search()
+        {
+            return View();
+        }
+
+        // POST: Vehicles/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Search(string NumbrePlate)
+        {
+            VehicleDetail vehicleDetail = await _context.VehicleDetails.Include(vd => vd.Vehicle).ThenInclude(v => v.Service).Where(v=> v.Vehicle.NumbrePlate == NumbrePlate).FirstOrDefaultAsync();
+            if (vehicleDetail != null)
+            {
+                Vehicle vehicle = vehicleDetail.Vehicle;
+                Service service = vehicle.Service;
+                VehicleViewModel vehicleViewModel = new VehicleViewModel()
+                {
+
+                    Id = vehicle.Id,
+                    NumbrePlate = NumbrePlate,
+                    Owner = vehicle.Owner,
+                    CreatedDate = vehicleDetail.CreatedDate,
+                    ServiceName = service.Name,
+                    Price = service.Price,
+                    DeliveryDate = vehicleDetail.DeliveryDate
+                };
+                return View("Details", vehicleViewModel);
+            }
+            ModelState.AddModelError("","No se encuentra el vehiculo");
+            return View();
+        }
+
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null || _context.Vehicles == null)

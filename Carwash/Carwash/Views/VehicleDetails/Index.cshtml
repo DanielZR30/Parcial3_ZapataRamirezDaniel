@@ -42,9 +42,7 @@
                 @Html.DisplayFor(modelItem => item.DeliveryDate)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" asp-route-vehicleid="@item.Vehicle.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id" asp-route-vehicleid="@item.Vehicle.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id" asp-route-vehicleid="@item.Vehicle.Id">Delete</a>
+                <a class="btn-primary" asp-action="Edit" asp-route-id="@item.Id" asp-route-vehicleid="@item.Vehicle.Id">Edit</a>
             </td>
         </tr>
 }
