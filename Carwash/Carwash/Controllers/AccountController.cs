@@ -7,19 +7,11 @@ namespace Carwash.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly DatabaseContext _context;
         private readonly IUserHelper _userHelper;
 
-        public AccountController(DatabaseContext context, IUserHelper userHelper)
+        public AccountController(IUserHelper userHelper)
         {
-            _context = context;
             _userHelper = userHelper;
-        }
-
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
         }
 
         [HttpGet]

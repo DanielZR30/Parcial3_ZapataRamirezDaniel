@@ -21,9 +21,10 @@ namespace Carwash.DAL
         {
             await _context.Database.EnsureCreatedAsync();
             await PopulateServicesAsync();
+            await PopulateRoleAsync();
             await PopulateUserAsync("Admin", "Role", "admin_role@yopmail.com", "3002323232", "Street Fighter 1", "102030", UserType.Admin);
             await PopulateUserAsync("User", "Role", "user_role@yopmail.com", "40056566756", "Street Fighter 2", "405060", UserType.User);
-            await PopulateRoleAsync();
+            await PopulateUserAsync("Client", "Role", "client_role@yopmail.com", "40056566756", "Street Fighter 2", "405060", UserType.Client);
             await _context.SaveChangesAsync();
         }
 
@@ -46,6 +47,7 @@ namespace Carwash.DAL
             {
                 await _userHelper.CheckRoleAsync(UserType.Admin.ToString());
                 await _userHelper.CheckRoleAsync(UserType.User.ToString());
+                await _userHelper.CheckRoleAsync(UserType.Client.ToString());
             }
         }
 
