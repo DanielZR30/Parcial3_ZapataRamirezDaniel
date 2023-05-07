@@ -23,6 +23,7 @@ namespace Carwash.Controllers
         }
 
         // GET: VehicleDetails
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return _context.VehicleDetails != null ?
