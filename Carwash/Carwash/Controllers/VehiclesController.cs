@@ -28,6 +28,8 @@ namespace Carwash.Controllers
             _DDLHelper = dropDownListHelper;
         }
 
+
+        [Authorize(Roles = "Admin")]
         // GET: Vehicles
         public async Task<IActionResult> Index()
         {
@@ -62,41 +64,48 @@ namespace Carwash.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ServiceViewModel serviceViewModel)
         {
-                try
-                {
-                    Vehicle vehicle;
-                    VehicleDetail vehicleDetail;
-                    vehicle = new Vehicle()
-                    {
-                        Id = Guid.NewGuid(),
-                        Service = await _context.Services.FindAsync(serviceViewModel.ServiceId),
-                        Owner = serviceViewModel.Owner,
-                        NumbrePlate = serviceViewModel.NumbrePlate
-                    };
-
-                    vehicleDetail = new VehicleDetail()
-                    {
-                        Id = Guid.NewGuid(),
-                        CreatedDate = DateTime.Now,
-                        DeliveryDate = null,
-                        Vehicle = vehicle
-                    };
-
-                    _context.Add(vehicle);
-                    _context.VehicleDetails.Add(vehicleDetail);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Index", "Home");
-                }
-                catch (Exception ex)
-                {
-
-                }
-            serviceViewModel = new()
+            try
             {
-                Services = await _DDLHelper.GetDDLServicesAsync(),
-            };
-            ModelState.AddModelError(string.Empty, "Seleccione un servicio");
-            return View(serviceViewModel);
+                if (serviceViewModel.NumbrePlate.Length != 6)
+                {
+                    throw new Exception("la placa debe tener 6 caracteres.");
+                }
+                Vehicle vehicle;
+                VehicleDetail vehicleDetail;
+                vehicle = new Vehicle()
+                {
+                    Id = Guid.NewGuid(),
+                    Service = await _context.Services.FindAsync(serviceViewModel.ServiceId),
+                    Owner = serviceViewModel.Owner,
+                    NumbrePlate = serviceViewModel.NumbrePlate
+                };
+
+                vehicleDetail = new VehicleDetail()
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedDate = DateTime.Now,
+                    DeliveryDate = null,
+                    Vehicle = vehicle
+                };
+
+                _context.Add(vehicle);
+                _context.VehicleDetails.Add(vehicleDetail);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                if(serviceViewModel.ServiceId == Guid.Empty)
+                {
+                    ModelState.AddModelError(string.Empty, "Seleccione un servicio");
+                }   
+                serviceViewModel = new()
+                {
+                    Services = await _DDLHelper.GetDDLServicesAsync(),
+                };
+                return View(serviceViewModel);
+            }
+
         }
 
         [Authorize(Roles = "Client")]
