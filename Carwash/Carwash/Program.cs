@@ -39,6 +39,8 @@ builder.Services.AddTransient<SeederDb>();
 
 builder.Services.AddScoped<IUserHelper, UserHelper>();
 
+builder.Services.AddScoped<IDropDownListHelper, DropDownListHelper>();
+
 var app = builder.Build();
 
 SeederData();
