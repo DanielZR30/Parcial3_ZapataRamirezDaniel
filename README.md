@@ -8,6 +8,7 @@
 - POO
 - Entity Framework
 - Linq
+- Bootstrap
 ## Funtionalities
 - Login
 - Show list of vehicles
